@@ -27,11 +27,11 @@ jobs:
           const source = 'https://postorder.isgsi.chatgpt.site/';
           const expected = {
             "favicon.svg": "e6d2e59b7b5bbb0342e0fb496dfc262decbfe4426bbb7b047aec8d467d1dc6f7",
-            "index.html": "99e5cf4b6d4e73469f64d6e8cbd722195dc883205e947b5a765a93b07729e93f",
+            "index.html": "b88985b1856c06f0d3763947c74031ba18fd801884afd7f9001f5cba87b0cae2",
             "sample-report.docx": "9f3ec9b22f0194aece367aabcdf6f62fa0aebf47d751c05f7f5a1c18481f7712",
-            "assets/index-C8Mn_Cq3.js": "a354641b7dfcb4cc5027c599d36232844d583218c0980841c8504c71bb523cfb",
-            "assets/index-CgvgC7zz.css": "0699f6034f2754f76d5a6614b25d36cdba633724e16fb231d2b7e8b433a6719a",
-            "assets/ocr-BIL47Ovo.js": "84f3923e600ab08ef07b442174837d5caab1ce5f0de9c38c1d0c453a55560401",
+            "assets/index-ChXUpxyP.js": "f75d822fab08aaafd75cc319e9a67cd918248954a00da580550b6d30b6b79f9a",
+            "assets/index-CXCTQDF8.css": "9715dc6e49754ed0bb4e9eca9471da15e20acff13fbcd2958e531d8c4331d852",
+            "assets/ocr-ZlO__NsR.js": "2bee2a9536aff1892f0e638899ed547cc64277233db155b966b0254d81846e31",
             "ocr/LICENSE-tesseract.txt": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
             "ocr/worker.min.js": "38645599043239c0eb6db08a6504a92dcdc292200535f3e9339cd77c4443b842",
             "ocr/core/tesseract-core-lstm.wasm": "220e2e87551edccb85519796a170469f8ab2a8055216789e3b8b1ada18b7bc2b",
@@ -46,12 +46,12 @@ jobs:
           };
           const output = path.resolve('.');
           try {
-            await fs.access(path.join(output, 'assets/index-C8Mn_Cq3.js'));
+            await fs.access(path.join(output, 'assets/index-ChXUpxyP.js'));
             console.log('This website version is already stored in the repository.');
             process.exit(0);
           } catch {}
           const assets = new Map();
-          const originalEntry = "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /><meta name=\"description\" content=\"Put captured Instagram posts in chronological order inside your Word report. Read and review dates privately in your browser.\" /><meta name=\"theme-color\" content=\"#2A4735\" /><title>PostOrder · Put captured posts in date order</title>  <script type=\"module\" crossorigin src=\"/assets/index-C8Mn_Cq3.js\"></script>\n  <link rel=\"stylesheet\" crossorigin href=\"/assets/index-CgvgC7zz.css\">\n</head><body><div id=\"root\"></div></body></html>\n";
+          const originalEntry = "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /><meta name=\"description\" content=\"Put captured Instagram posts in chronological order inside your Word report. Read and review dates privately in your browser.\" /><meta name=\"theme-color\" content=\"#2A4735\" /><title>PostOrder · Put captured posts in date order</title>  <script type=\"module\" crossorigin src=\"/assets/index-ChXUpxyP.js\"></script>\n  <link rel=\"stylesheet\" crossorigin href=\"/assets/index-CXCTQDF8.css\">\n</head><body><div id=\"root\"></div></body></html>\n";
           for (const [name, digest] of Object.entries(expected)) {
             let data;
             if (name === 'index.html') {
@@ -71,8 +71,8 @@ jobs:
           }
           const tick = String.fromCharCode(96);
           replaceExactly('index.html', '"/assets/', '"/postorder/assets/', 2);
-          replaceExactly('assets/index-C8Mn_Cq3.js', tick + '/sample-report.docx' + tick, tick + '/postorder/sample-report.docx' + tick, 1);
-          replaceExactly('assets/ocr-BIL47Ovo.js', tick + '/ocr/' + tick, tick + '/postorder/ocr/' + tick, 1);
+          replaceExactly('assets/index-ChXUpxyP.js', tick + '/sample-report.docx' + tick, tick + '/postorder/sample-report.docx' + tick, 1);
+          replaceExactly('assets/ocr-ZlO__NsR.js', tick + '/ocr/' + tick, tick + '/postorder/ocr/' + tick, 1);
           for (const [name, data] of assets) {
             const destination = path.join(output, name);
             await fs.mkdir(path.dirname(destination), { recursive: true });
