@@ -18,7 +18,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v6
-      - name: Import the verified public website once
+      - name: Import the verified website update
         run: |
           node --input-type=module <<'POSTORDER_IMPORT'
           import fs from 'node:fs/promises';
@@ -27,11 +27,11 @@ jobs:
           const source = 'https://postorder.isgsi.chatgpt.site/';
           const expected = {
             "favicon.svg": "e6d2e59b7b5bbb0342e0fb496dfc262decbfe4426bbb7b047aec8d467d1dc6f7",
-            "index.html": "35cf733b13741e7bee9e5536f6047154bc765b947fd91899b78c98e4f9b29877",
+            "index.html": "1b274669a19df18a653611b4cf5088afa97507ad4bfb52636502a75935a3446b",
             "sample-report.docx": "9f3ec9b22f0194aece367aabcdf6f62fa0aebf47d751c05f7f5a1c18481f7712",
-            "assets/index-B3xhQWyG.js": "27a2922c3515c8cc9a322ab1a9426ed2bb86764b3957dbe5c623212df374f84b",
-            "assets/index-BIXBzI5_.css": "a750fe2b96354fd81f8666336e454bfc14d26335e6711adf0b75b29eae4fa87d",
-            "assets/ocr-BC-oVaKw.js": "f57746399e265885dd4c35bc43c4509d461b583892363ea14dee50ecca16061a",
+            "assets/index-DQRoFpXa.js": "2eb2f21a292719807bafbaf702b18dae3bc15eb961506e450bd622cf9553332e",
+            "assets/index-CgvgC7zz.css": "0699f6034f2754f76d5a6614b25d36cdba633724e16fb231d2b7e8b433a6719a",
+            "assets/ocr-CTxbIn0V.js": "3615a22bd439ce17e69769fb5f6602245e7b03e5df05ce5b854b74f1aaadc618",
             "ocr/LICENSE-tesseract.txt": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
             "ocr/worker.min.js": "38645599043239c0eb6db08a6504a92dcdc292200535f3e9339cd77c4443b842",
             "ocr/core/tesseract-core-lstm.wasm": "220e2e87551edccb85519796a170469f8ab2a8055216789e3b8b1ada18b7bc2b",
@@ -46,12 +46,12 @@ jobs:
           };
           const output = path.resolve('.');
           try {
-            await fs.access(path.join(output, 'index.html'));
-            console.log('Using the website already stored in this repository.');
+            await fs.access(path.join(output, 'assets/index-DQRoFpXa.js'));
+            console.log('This website version is already stored in the repository.');
             process.exit(0);
           } catch {}
           const assets = new Map();
-          const originalEntry = "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /><meta name=\"description\" content=\"Put captured Instagram posts in chronological order inside your Word report. Read and review dates privately in your browser.\" /><meta name=\"theme-color\" content=\"#2A4735\" /><title>PostOrder · Put captured posts in date order</title>  <script type=\"module\" crossorigin src=\"/assets/index-B3xhQWyG.js\"></script>\n  <link rel=\"stylesheet\" crossorigin href=\"/assets/index-BIXBzI5_.css\">\n</head><body><div id=\"root\"></div></body></html>\n";
+          const originalEntry = "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /><meta name=\"description\" content=\"Put captured Instagram posts in chronological order inside your Word report. Read and review dates privately in your browser.\" /><meta name=\"theme-color\" content=\"#2A4735\" /><title>PostOrder · Put captured posts in date order</title>  <script type=\"module\" crossorigin src=\"/assets/index-DQRoFpXa.js\"></script>\n  <link rel=\"stylesheet\" crossorigin href=\"/assets/index-CgvgC7zz.css\">\n</head><body><div id=\"root\"></div></body></html>\n";
           for (const [name, digest] of Object.entries(expected)) {
             let data;
             if (name === 'index.html') {
@@ -71,8 +71,8 @@ jobs:
           }
           const tick = String.fromCharCode(96);
           replaceExactly('index.html', '"/assets/', '"/postorder/assets/', 2);
-          replaceExactly('assets/index-B3xhQWyG.js', tick + '/sample-report.docx' + tick, tick + '/postorder/sample-report.docx' + tick, 1);
-          replaceExactly('assets/ocr-BC-oVaKw.js', tick + '/ocr/' + tick, tick + '/postorder/ocr/' + tick, 1);
+          replaceExactly('assets/index-DQRoFpXa.js', tick + '/sample-report.docx' + tick, tick + '/postorder/sample-report.docx' + tick, 1);
+          replaceExactly('assets/ocr-CTxbIn0V.js', tick + '/ocr/' + tick, tick + '/postorder/ocr/' + tick, 1);
           for (const [name, data] of assets) {
             const destination = path.join(output, name);
             await fs.mkdir(path.dirname(destination), { recursive: true });
