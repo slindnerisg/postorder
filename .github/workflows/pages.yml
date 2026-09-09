@@ -1,0 +1,104 @@
+name: Publish PostOrder
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Import the verified public website once
+        run: |
+          node --input-type=module <<'POSTORDER_IMPORT'
+          import fs from 'node:fs/promises';
+          import path from 'node:path';
+          import { createHash } from 'node:crypto';
+          const source = 'https://postorder.isgsi.chatgpt.site/';
+          const expected = {
+            "favicon.svg": "e6d2e59b7b5bbb0342e0fb496dfc262decbfe4426bbb7b047aec8d467d1dc6f7",
+            "index.html": "35cf733b13741e7bee9e5536f6047154bc765b947fd91899b78c98e4f9b29877",
+            "sample-report.docx": "9f3ec9b22f0194aece367aabcdf6f62fa0aebf47d751c05f7f5a1c18481f7712",
+            "assets/index-B3xhQWyG.js": "27a2922c3515c8cc9a322ab1a9426ed2bb86764b3957dbe5c623212df374f84b",
+            "assets/index-BIXBzI5_.css": "a750fe2b96354fd81f8666336e454bfc14d26335e6711adf0b75b29eae4fa87d",
+            "assets/ocr-BC-oVaKw.js": "f57746399e265885dd4c35bc43c4509d461b583892363ea14dee50ecca16061a",
+            "ocr/LICENSE-tesseract.txt": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+            "ocr/worker.min.js": "38645599043239c0eb6db08a6504a92dcdc292200535f3e9339cd77c4443b842",
+            "ocr/core/tesseract-core-lstm.wasm": "220e2e87551edccb85519796a170469f8ab2a8055216789e3b8b1ada18b7bc2b",
+            "ocr/core/tesseract-core-lstm.wasm.js": "775a35df6f2ae100e02609443e6bd5cafcd07983dd6175454ca4a432a7730687",
+            "ocr/core/tesseract-core-simd-lstm.wasm": "187d76742dfc0d8929f0b49a619f145bb6370730776c7bd0d3e20c6b2098808d",
+            "ocr/core/tesseract-core-simd-lstm.wasm.js": "9d7c43fb206dc9f48475228b46bf35f888fa9e6259da2e67d5a75c77049f2dc7",
+            "ocr/core/tesseract-core-simd.wasm": "ca11ee92a02023e4f5083eefd0966fb83b297416da54e997b9f6ce445f719c9b",
+            "ocr/core/tesseract-core-simd.wasm.js": "3b0678c47a8dea6abb931b214171c08b742a5b9a9fcbbb1a028a08d5de6e9d4c",
+            "ocr/core/tesseract-core.wasm": "740f7e466a2f026e1f1e54a2e0d9957e386d8166110d1290224abd3d08986106",
+            "ocr/core/tesseract-core.wasm.js": "e66872f6a76f5ad414d73d21512245df0de3060ad4871a97c47efceaab27b955",
+            "ocr/lang/eng.traineddata.gz": "45b4cb346724ac1774f1c36f42f182b887bcdb28ebe63e6fff90ac41f3fcff91"
+          };
+          const output = path.resolve('.');
+          try {
+            await fs.access(path.join(output, 'index.html'));
+            console.log('Using the website already stored in this repository.');
+            process.exit(0);
+          } catch {}
+          const assets = new Map();
+          const originalEntry = "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /><meta name=\"description\" content=\"Put captured Instagram posts in chronological order inside your Word report. Read and review dates privately in your browser.\" /><meta name=\"theme-color\" content=\"#2A4735\" /><title>PostOrder · Put captured posts in date order</title>  <script type=\"module\" crossorigin src=\"/assets/index-B3xhQWyG.js\"></script>\n  <link rel=\"stylesheet\" crossorigin href=\"/assets/index-BIXBzI5_.css\">\n</head><body><div id=\"root\"></div></body></html>\n";
+          for (const [name, digest] of Object.entries(expected)) {
+            let data;
+            if (name === 'index.html') {
+              data = Buffer.from(originalEntry);
+            } else {
+              const response = await fetch(new URL(name, source));
+              if (!response.ok) throw new Error('Cannot read public website file ' + name + ': ' + response.status);
+              data = Buffer.from(await response.arrayBuffer());
+            }
+            if (createHash('sha256').update(data).digest('hex') !== digest) throw new Error('Published file changed: ' + name);
+            assets.set(name, data);
+          }
+          function replaceExactly(name, from, to, count) {
+            const text = assets.get(name).toString('utf8');
+            if (text.split(from).length - 1 !== count) throw new Error('Unexpected path count in ' + name);
+            assets.set(name, Buffer.from(text.split(from).join(to)));
+          }
+          const tick = String.fromCharCode(96);
+          replaceExactly('index.html', '"/assets/', '"/postorder/assets/', 2);
+          replaceExactly('assets/index-B3xhQWyG.js', tick + '/sample-report.docx' + tick, tick + '/postorder/sample-report.docx' + tick, 1);
+          replaceExactly('assets/ocr-BC-oVaKw.js', tick + '/ocr/' + tick, tick + '/postorder/ocr/' + tick, 1);
+          for (const [name, data] of assets) {
+            const destination = path.join(output, name);
+            await fs.mkdir(path.dirname(destination), { recursive: true });
+            await fs.writeFile(destination, data);
+          }
+          await fs.writeFile(path.join(output, '.nojekyll'), '');
+          console.log('Imported and verified ' + assets.size + ' public website files. Document processing remains in the visitor browser.');
+          POSTORDER_IMPORT
+      - name: Save the independent website copy
+        run: |
+          git add index.html favicon.svg sample-report.docx assets ocr .nojekyll
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Publish standalone PostOrder website"
+            git push
+          fi
+      - name: Prepare website files
+        run: |
+          mkdir -p _site
+          cp index.html favicon.svg sample-report.docx .nojekyll _site/
+          cp -R assets ocr _site/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Publish website
+        id: deployment
+        uses: actions/deploy-pages@v4
