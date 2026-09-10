@@ -27,11 +27,11 @@ jobs:
           const source = 'https://postorder.isgsi.chatgpt.site/';
           const expected = {
             "favicon.svg": "e6d2e59b7b5bbb0342e0fb496dfc262decbfe4426bbb7b047aec8d467d1dc6f7",
-            "index.html": "86640710313fec851887a34289a59d6f8d11453a3ba2e7db33c8f3f288207380",
+            "index.html": "7a286eb3c693e7c71a5d7b492c10f4ef128e14f570e8d1c9f050c2633c3dfaa8",
             "sample-report.docx": "9f3ec9b22f0194aece367aabcdf6f62fa0aebf47d751c05f7f5a1c18481f7712",
-            "assets/index-B7-fb7br.js": "bdbc3ce50f017ccb7543155877430a2ba7ecac8e1850690b4bada514e1c58799",
+            "assets/index-1uECazbT.js": "40284616530daec63812f903136455a97feea3edf9d164b28ba44f4fb854dd43",
             "assets/index-CXCTQDF8.css": "9715dc6e49754ed0bb4e9eca9471da15e20acff13fbcd2958e531d8c4331d852",
-            "assets/ocr-BhKDCyHS.js": "899f071fd9ccf7a6a94891395dc1f50b5d0ea6340bbdfe76d856658d0c0a6ac9",
+            "assets/ocr-DsiMdJWD.js": "8c560651675dd6cc0326356d0ba1e71c0c2acd25fca25dfd51814a17a6915bd3",
             "ocr/LICENSE-tesseract.txt": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
             "ocr/worker.min.js": "38645599043239c0eb6db08a6504a92dcdc292200535f3e9339cd77c4443b842",
             "ocr/core/tesseract-core-lstm.wasm": "220e2e87551edccb85519796a170469f8ab2a8055216789e3b8b1ada18b7bc2b",
@@ -46,12 +46,12 @@ jobs:
           };
           const output = path.resolve('.');
           try {
-            await fs.access(path.join(output, 'assets/index-B7-fb7br.js'));
+            await fs.access(path.join(output, 'assets/index-1uECazbT.js'));
             console.log('This website version is already stored in the repository.');
             process.exit(0);
           } catch {}
           const assets = new Map();
-          const originalEntry = "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /><meta name=\"description\" content=\"Put captured Instagram posts in chronological order inside your Word report. Read and review dates privately in your browser.\" /><meta name=\"theme-color\" content=\"#2A4735\" /><title>PostOrder · Put captured posts in date order</title>  <script type=\"module\" crossorigin src=\"/assets/index-B7-fb7br.js\"></script>\n  <link rel=\"stylesheet\" crossorigin href=\"/assets/index-CXCTQDF8.css\">\n</head><body><div id=\"root\"></div></body></html>\n";
+          const originalEntry = "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /><meta name=\"description\" content=\"Put captured Instagram posts in chronological order inside your Word report. Read and review dates privately in your browser.\" /><meta name=\"theme-color\" content=\"#2A4735\" /><title>PostOrder · Put captured posts in date order</title>  <script type=\"module\" crossorigin src=\"/assets/index-1uECazbT.js\"></script>\n  <link rel=\"stylesheet\" crossorigin href=\"/assets/index-CXCTQDF8.css\">\n</head><body><div id=\"root\"></div></body></html>\n";
           for (const [name, digest] of Object.entries(expected)) {
             let data;
             if (name === 'index.html') {
@@ -71,8 +71,8 @@ jobs:
           }
           const tick = String.fromCharCode(96);
           replaceExactly('index.html', '"/assets/', '"/postorder/assets/', 2);
-          replaceExactly('assets/index-B7-fb7br.js', tick + '/sample-report.docx' + tick, tick + '/postorder/sample-report.docx' + tick, 1);
-          replaceExactly('assets/ocr-BhKDCyHS.js', tick + '/ocr/' + tick, tick + '/postorder/ocr/' + tick, 1);
+          replaceExactly('assets/index-1uECazbT.js', tick + '/sample-report.docx' + tick, tick + '/postorder/sample-report.docx' + tick, 1);
+          replaceExactly('assets/ocr-DsiMdJWD.js', tick + '/ocr/' + tick, tick + '/postorder/ocr/' + tick, 1);
           for (const [name, data] of assets) {
             const destination = path.join(output, name);
             await fs.mkdir(path.dirname(destination), { recursive: true });
